@@ -16,7 +16,6 @@ func _ready():
 
 
 sync func update_players(p):
-	print(p)
 	players = p
 	get_node(player_list).clear()
 	for player in players:
@@ -101,6 +100,10 @@ func _on_connect_pressed():
 	if peer and get_tree().is_network_server():
 		print("Server connecting to self")
 		rpc("register_player", get_node(name_field).text)
+		rpc("register_player", "Dummy 1")
+		rpc("register_player", "Dummy 2")
+		rpc("register_player", "Dummy 3")
+		rpc("register_player", "Dummy 4")
 		return
 	# players will open a socket connection
 	if peer:

@@ -8,5 +8,7 @@ func _ready():
 
 func init(info):
 	player_info = info
-	name = info.id
-
+	name = str(info.id) + info.name
+	var id = get_tree().get_network_unique_id()
+	if id == info.id:
+		get_node("Camera").make_current()

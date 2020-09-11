@@ -1,13 +1,20 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scenes/game/Level/Environment.tres" type="Environment" id=1]
 
 [sub_resource type="PlaneMesh" id=1]
 size = Vector2( 20, 20 )
 
+[sub_resource type="Curve3D" id=2]
+_data = {
+"points": PoolVector3Array( -0.0476379, 0, 2.84334, 0.0476379, 0, -2.84334, -5, 0, 0, -2.80071, 0, -0.00110197, 2.80071, 0, 0.00110197, 0, 0, -5, 0.00135136, 0, -2.70547, -0.00135136, 0, 2.70547, 5, 0, 0, 2.91928, 0, 0.0390897, -2.91928, 0, -0.0390897, 0, 0, 5, -0.00901699, 0, 2.7265, 0.00901699, 0, -2.7265, -5, 0, 0 ),
+"tilts": PoolRealArray( 0, 0, 0, 0, 0 )
+}
+
 [node name="Level" type="Spatial"]
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
+visible = false
 mesh = SubResource( 1 )
 material/0 = null
 
@@ -18,3 +25,6 @@ environment = ExtResource( 1 )
 transform = Transform( 1, 0, 0, 0, 0.469179, 0.883103, 0, -0.883103, 0.469179, 0, 3.19974, 0 )
 light_energy = 0.5
 shadow_enabled = true
+
+[node name="Spawns" type="Path" parent="."]
+curve = SubResource( 2 )

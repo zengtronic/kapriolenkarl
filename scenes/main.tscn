@@ -2,6 +2,9 @@
 
 [ext_resource path="res://scenes/lobby/Lobby.tscn" type="PackedScene" id=1]
 
-[node name="root" type="Node"]
+[node name="main" type="Node"]
 
 [node name="lobby" parent="." instance=ExtResource( 1 )]
+name_field = NodePath("../../main/lobby/Panel/HBoxContainer/VBoxContainer/name")
+address_field = NodePath("../../main/lobby/Panel/HBoxContainer/VBoxContainer/address")
+player_list = NodePath("../../main/lobby/Panel/HBoxContainer/VBoxContainer2/players")
