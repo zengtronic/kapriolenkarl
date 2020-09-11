@@ -5,11 +5,15 @@ var Level = preload("res://scenes/game/Level/Level.tscn")
 
 var players = []
 var level = null
+var running = false
 
 
-sync func start_game(player_info):
+remotesync func start_game(player_info):
+	if running: return
 	var lobby = get_node("../main/lobby")
-	if lobby: lobby.hide()
+	if lobby:
+		lobby.get_node("background").hide()
+		lobby.hide()
 	var test = get_tree().get_root()
 	if level:
 		remove_child(level)
@@ -21,6 +25,7 @@ sync func start_game(player_info):
 	level = Level.instance()
 	add_child(level)
 	spawn(player_info)
+	running = true
 
 
 func spawn(player_info):
