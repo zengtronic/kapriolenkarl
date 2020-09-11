@@ -1,6 +1,8 @@
 extends Control
 
-var peer: WebSocketClient = null
+var port = 1080
+
+var peer = null
 
 var players = []
 
@@ -17,8 +19,11 @@ sync func update_players(p):
 	print(p)
 	players = p
 	get_node(player_list).clear()
-	for player in p:
-		get_node(player_list).add_item(player.name)
+	for player in players:
+		if player.ready:
+			get_node(player_list).add_item(player.name + " (Bereitschaft)")
+		else:
+			get_node(player_list).add_item(player.name)
 
 
 func _player_connected(id):
@@ -27,18 +32,33 @@ func _player_connected(id):
 
 master func register_player(name):
 	var sender = get_tree().get_rpc_sender_id()
-	var newList = players
-	for player in newList:
-		if player.name == name:
-			return
-	newList.append({
+	for p in players:
+		if p.name == name:
+			return # no duplicate players
+	players.append({
 		"id": sender,
 		"name": name,
 		"ready": false
 	})
-	for player in newList:
-		rpc_id(player.id, "update_players", newList)
-	update_players(newList)
+	for p in players:
+		rpc_id(p.id, "update_players", players)
+	update_players(players)
+
+
+master func player_ready(state):
+	var sender = get_tree().get_rpc_sender_id()
+	for p in players:
+		if p.id == sender:
+			p.ready = state
+	var all_ready = true
+	for p in players:
+		rpc_id(p.id, "update_players", players)
+		if !p.ready:
+			all_ready = false
+	update_players(players)
+	if all_ready:
+		print("staring game")
+		GameManager.rpc("start_game", players)
 
 
 func _player_disconnected(id):
@@ -51,11 +71,10 @@ func _player_disconnected(id):
 	if (!p):
 		print("Couldn't find player to remove")
 		return
-	var newList = players
-	newList.erase(p)
-	for player in newList:
-		rpc_id(player.id, "update_players", newList)
-	update_players(newList)
+	players.erase(p)
+	for player in players:
+		rpc_id(player.id, "update_players", players)
+	update_players(players)
 
 
 func _close_network():	
@@ -75,12 +94,15 @@ func _connected():
 	if get_tree().is_network_server():
 		return
 	# register to the server with the name
-	rpc("register_player", get_node(name_field).text)
+	rpc_id(1, "register_player", get_node(name_field).text)
 
 
 func _on_connect_pressed():
-	if get_tree().is_network_server():
+	if peer and get_tree().is_network_server():
+		print("Server connecting to self")
+		rpc("register_player", get_node(name_field).text)
 		return
+	# players will open a socket connection
 	if peer:
 		_close_network()
 	var host = get_node(address_field).text
@@ -92,5 +114,28 @@ func _on_connect_pressed():
 
 
 func _on_ready_pressed():
-	if (!peer):
+	var s = get_self()
+	if (!s):
 		return
+	rpc("player_ready", !s.ready)
+
+
+func get_self():
+	var own = get_tree().get_network_unique_id()
+	if (!own):
+		return null
+	for i in players:
+		if i.id == own:
+			return i
+	return null
+
+
+func _on_host_pressed():
+	print("Starting server")
+	peer = WebSocketServer.new()
+	var e = peer.listen(port, PoolStringArray(), true)
+	if (e == OK):
+		get_tree().set_network_peer(peer)
+		print("Server started on port " + str(port))
+	else:
+		printerr("Error starting server on " + str(port))

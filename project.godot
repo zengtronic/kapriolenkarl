@@ -8,17 +8,22 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node",
+"class": "Player",
+"language": "GDScript",
+"path": "res://scenes/game/GameManager.gd"
+} ]
 _global_script_class_icons={
-
+"Player": ""
 }
 
 [application]
 
 config/name="kk2"
-run/main_scene="res://scenes/server/Server.tscn"
+run/main_scene="res://scenes/main.tscn"
 config/icon="res://icon.png"
 
-[rendering]
+[autoload]
 
-environment/default_environment="res://default_env.tres"
+GameManager="*res://scenes/game/GameManager.gd"
