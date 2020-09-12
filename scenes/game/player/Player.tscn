@@ -1,22 +1,34 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/game/player/Player.gd" type="Script" id=1]
 
 [sub_resource type="CubeMesh" id=1]
 
-[sub_resource type="BoxShape" id=2]
+[sub_resource type="CapsuleShape" id=2]
+radius = 0.471481
+
+[sub_resource type="CapsuleMesh" id=3]
+radius = 0.464
 
 [node name="Player" type="Spatial"]
 script = ExtResource( 1 )
+hammer_path = NodePath("hammer")
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
+visible = false
 mesh = SubResource( 1 )
 material/0 = null
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.998703, 0.0509067, 0, -0.0509067, 0.998703, 0, 1.78876, 5.18962 )
 
-[node name="StaticBody" type="StaticBody" parent="."]
+[node name="hammer" type="KinematicBody" parent="."]
 
-[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+[node name="CollisionShape" type="CollisionShape" parent="hammer"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
 shape = SubResource( 2 )
+
+[node name="MeshInstance" type="MeshInstance" parent="hammer"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 3 )
+material/0 = null

@@ -100,11 +100,11 @@ func _on_connect_pressed():
 	if peer and get_tree().is_network_server():
 		print("Server connecting to self")
 		rpc("register_player", get_node(name_field).text)
+		return
 		rpc("register_player", "Dummy 1")
 		rpc("register_player", "Dummy 2")
 		rpc("register_player", "Dummy 3")
 		rpc("register_player", "Dummy 4")
-		return
 	# players will open a socket connection
 	if peer:
 		_close_network()
