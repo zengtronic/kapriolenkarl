@@ -17,6 +17,7 @@ func init(info):
 		get_node("Camera").make_current()
 
 func _unhandled_input(event):
+	return
 	if event is InputEventMouseMotion:
 		var scaled = event.position / get_viewport().size
 		if event.button_mask & BUTTON_LEFT:

@@ -5,4 +5,6 @@
 [resource]
 background_mode = 2
 background_sky = SubResource( 1 )
+background_energy = 0.72
 ssao_enabled = true
+adjustment_brightness = 0.72

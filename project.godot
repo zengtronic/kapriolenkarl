@@ -18,7 +18,25 @@ _global_script_class_icons={
 config/name="kk2"
 run/main_scene="res://scenes/main.tscn"
 config/icon="res://icon.png"
+run/main_scene.Server="res://scenes/server/Server.tscn"
 
 [autoload]
 
 GameManager="*res://scenes/game/GameManager.gd"
+
+[editor]
+
+main_run_args="port=1080"
+
+[filesystem]
+
+import/open_asset_import/use_fbx=false
+
+[physics]
+
+3d/physics_engine="Bullet"
+3d/active_soft_world=false
+
+[rendering]
+
+quality/driver/driver_name="GLES2"

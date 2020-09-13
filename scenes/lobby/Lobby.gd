@@ -11,6 +11,11 @@ export(NodePath) var address_field
 export(NodePath) var player_list
 
 func _ready():
+	var args = OS.get_cmdline_args()
+	for arg in args:
+		if "port" in arg:
+			port = int(arg.split("=")[1])
+
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
 
