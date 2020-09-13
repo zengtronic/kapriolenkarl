@@ -26,7 +26,7 @@ GameManager="*res://scenes/game/GameManager.gd"
 
 [editor]
 
-main_run_args="port=1080"
+main_run_args="port=9999"
 
 [filesystem]
 

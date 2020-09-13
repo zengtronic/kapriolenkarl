@@ -18,6 +18,10 @@ func _ready():
 
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
+	
+	if GameManager.debug:
+		_on_host_pressed()
+		_on_connect_pressed()
 
 
 sync func update_players(p):
@@ -42,11 +46,13 @@ master func register_player(name):
 	players.append({
 		"id": sender,
 		"name": name,
-		"ready": false
+		"ready": false,
 	})
 	for p in players:
 		rpc_id(p.id, "update_players", players)
 	update_players(players)
+	if GameManager.debug:
+		_on_ready_pressed()
 
 
 master func player_ready(state):
@@ -105,11 +111,12 @@ func _on_connect_pressed():
 	if peer and get_tree().is_network_server():
 		print("Server connecting to self")
 		rpc("register_player", get_node(name_field).text)
+		if GameManager.debug:
+			rpc("register_player", "Dummy 1")
+			rpc("register_player", "Dummy 2")
+			rpc("register_player", "Dummy 3")
+			rpc("register_player", "Dummy 4")
 		return
-		rpc("register_player", "Dummy 1")
-		rpc("register_player", "Dummy 2")
-		rpc("register_player", "Dummy 3")
-		rpc("register_player", "Dummy 4")
 	# players will open a socket connection
 	if peer:
 		_close_network()

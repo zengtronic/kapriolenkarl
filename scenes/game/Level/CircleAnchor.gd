@@ -1,6 +1,6 @@
 extends StaticBody
 
-var speed = 2
+var speed = 1
 
 func _process(delta):
 	rotate_y(delta * speed)

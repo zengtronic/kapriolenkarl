@@ -25,16 +25,17 @@ bounce = 0.5
 [sub_resource type="GDScript" id=6]
 script/source = "extends RigidBody
 
+func _ready():
+	if !is_network_master():
+		sleeping = true
+
 remote func override(t):
 	transform = t
-	pass
 
 func _physics_process(delta):
 	if !GameManager.running: return
 	if is_network_master():
 		rpc(\"override\", transform)
-	else:
-		sleeping = true
 "
 
 [sub_resource type="CapsuleShape" id=7]
