@@ -10,11 +10,7 @@ var running = false
 
 remotesync func start_game(player_info):
 	if running: return
-	var lobby = get_node("../main/lobby")
-	if lobby:
-		lobby.get_node("background").hide()
-		lobby.hide()
-	var test = get_tree().get_root()
+	show_lobby(false)
 	if level:
 		remove_child(level)
 	
@@ -27,6 +23,13 @@ remotesync func start_game(player_info):
 	spawn(player_info)
 	running = true
 
+
+func show_lobby(show: bool):
+	var lobby = get_node("../main/lobby")
+	if lobby:
+		lobby.get_node("background").visible = show
+		lobby.visible = show
+	
 
 func spawn(player_info):
 	var spawns = level.get_node("Spawns")
