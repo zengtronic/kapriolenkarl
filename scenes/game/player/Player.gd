@@ -1,9 +1,11 @@
 extends Spatial
 
+var HUD = preload("res://scenes/game/player/Hud/HUD.tscn")
 var player_info = null
 export var hammer_path: NodePath
 var hammer
 var ready = false
+var pos_y = 0
 
 func _ready():
 	hammer = get_node(hammer_path)
@@ -14,18 +16,24 @@ func init(info):
 	name = str(info.id) + info.name
 	if info.is_local:
 		get_node("Camera").make_current()
-	ready = true	
+		var hud = HUD.instance()
+		hud.init(info)
+		add_child(hud)
+	ready = true
  
 
-remotesync func override(pos):
-	hammer.translation = pos
+remotesync func override(y):
+	pos_y = y
 
 
-func _unhandled_input(event):
-	if !ready: return
-	if event is InputEventMouseMotion and player_info.is_local:
-		var posy = -(event.position / get_viewport().size).y
-		posy = posy * 7 + 3
-		posy = clamp(posy, -0.8, 0.2)
-		var dir = Vector3(hammer.translation.x, posy, hammer.translation.z)
-		rpc_unreliable("override", dir)
+func _physics_process(delta):
+	if player_info.is_local:
+		if pos_y > 0:
+			pos_y -= delta
+			pos_y = clamp(pos_y, -1, 1)
+			rpc_unreliable("override", pos_y)
+	hammer.translation = Vector3(hammer.translation.x, pos_y, hammer.translation.z)
+
+func hit():
+	if pos_y <= 0:
+		pos_y = 1

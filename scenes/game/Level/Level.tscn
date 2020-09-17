@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://scenes/game/Level/Environment.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/game/Level/CircleAnchor.gd" type="Script" id=2]
@@ -6,23 +6,20 @@
 [sub_resource type="PlaneMesh" id=1]
 size = Vector2( 20, 20 )
 
-[sub_resource type="PhysicsMaterial" id=2]
-friction = 0.0
+[sub_resource type="CylinderShape" id=2]
+radius = 3.71
 
-[sub_resource type="BoxShape" id=3]
-extents = Vector3( 10, 1, 10 )
-
-[sub_resource type="Curve3D" id=4]
+[sub_resource type="Curve3D" id=3]
 _data = {
 "points": PoolVector3Array( -0.0476379, 0, 2.84334, 0.0476379, 0, -2.84334, -5, 0, 0, -2.80071, 0, -0.00110197, 2.80071, 0, 0.00110197, 0, 0, -5, 0.00135136, 0, -2.70547, -0.00135136, 0, 2.70547, 5, 0, 0, 2.91928, 0, 0.0390897, -2.91928, 0, -0.0390897, 0, 0, 5, -0.00901699, 0, 2.7265, 0.00901699, 0, -2.7265, -5, 0, 0 ),
 "tilts": PoolRealArray( 0, 0, 0, 0, 0 )
 }
 
-[sub_resource type="PhysicsMaterial" id=5]
+[sub_resource type="PhysicsMaterial" id=4]
 friction = 0.0
 bounce = 0.5
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=5]
 script/source = "extends RigidBody
 
 func _ready():
@@ -38,19 +35,30 @@ func _physics_process(delta):
 		rpc(\"override\", transform)
 "
 
-[sub_resource type="CapsuleShape" id=7]
+[sub_resource type="CapsuleShape" id=6]
 radius = 0.188823
-height = 0.474432
+height = 1.23312
 
-[sub_resource type="CapsuleMesh" id=8]
+[sub_resource type="CapsuleMesh" id=7]
 radius = 0.19
-mid_height = 0.453
+mid_height = 1.207
 
-[sub_resource type="CylinderMesh" id=9]
+[sub_resource type="CylinderMesh" id=8]
 
-[sub_resource type="CylinderShape" id=10]
+[sub_resource type="SphereShape" id=9]
+radius = 0.23
+
+[sub_resource type="PhysicsMaterial" id=10]
+friction = 0.0
 
 [sub_resource type="CylinderMesh" id=11]
+top_radius = 0.293
+bottom_radius = 0.293
+radial_segments = 8
+
+[sub_resource type="CylinderShape" id=12]
+
+[sub_resource type="CylinderMesh" id=13]
 
 [node name="Level" type="Spatial"]
 
@@ -62,14 +70,9 @@ mesh = SubResource( 1 )
 material/0 = null
 
 [node name="StaticBody" type="StaticBody" parent="Floor"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.472624, 0 )
-input_ray_pickable = false
-collision_layer = 3
-collision_mask = 3
-physics_material_override = SubResource( 2 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Floor/StaticBody"]
-shape = SubResource( 3 )
+shape = SubResource( 2 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 1 )
@@ -80,7 +83,7 @@ light_energy = 0.5
 shadow_enabled = true
 
 [node name="Spawns" type="Path" parent="."]
-curve = SubResource( 4 )
+curve = SubResource( 3 )
 __meta__ = {
 "_editor_description_": "players will spawn evenly spread on the path "
 }
@@ -89,66 +92,48 @@ __meta__ = {
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.5, 0 )
 input_ray_pickable = false
 mass = 0.2
-physics_material_override = SubResource( 5 )
+physics_material_override = SubResource( 4 )
 continuous_cd = true
 contact_monitor = true
 can_sleep = false
-script = SubResource( 6 )
+script = SubResource( 5 )
 
-[node name="CollisionShape" type="CollisionShape" parent="PlaneBody"]
-shape = SubResource( 7 )
+[node name="MainShape" type="CollisionShape" parent="PlaneBody"]
+shape = SubResource( 6 )
 
 [node name="PlaneMesh" type="MeshInstance" parent="PlaneBody"]
-mesh = SubResource( 8 )
+mesh = SubResource( 7 )
 material/0 = null
 
 [node name="RodMesh" type="MeshInstance" parent="PlaneBody"]
 transform = Transform( -1.35777e-08, -2.5643, 0, 0.0837207, -3.02109e-08, 0, 0, 0, 0.0837207, -2.58845, -1.19209e-07, 0 )
-mesh = SubResource( 9 )
+mesh = SubResource( 8 )
 material/0 = null
 
-[node name="PlaneJoint" type="Generic6DOFJoint" parent="."]
+[node name="CollisionShape2" type="CollisionShape" parent="PlaneBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8951, 0, 0 )
+shape = SubResource( 9 )
+
+[node name="HingeJoint" type="HingeJoint" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0 )
 nodes/node_a = NodePath("../PlaneBody")
 nodes/node_b = NodePath("../CircleAnchor")
-linear_limit_x/softness = 0.01
-angular_limit_x/enabled = false
-angular_motor_x/target_velocity = 20.0
-linear_limit_y/softness = 0.01
-linear_limit_y/damping = 0.01
-linear_motor_y/target_velocity = 200.0
-linear_spring_y/stiffness = 50.0
-angular_limit_y/upper_angle = 4.31
-angular_limit_y/restitution = 16.0
-angular_limit_y/damping = 16.0
-angular_limit_y/force_limit = 50.0
-angular_limit_y/erp = 500.0
-angular_motor_y/target_velocity = 50000.0
-angular_motor_y/force_limit = 0.0
-angular_spring_y/stiffness = 50.0
-linear_limit_z/softness = 0.01
-angular_limit_z/upper_angle = 79.16
-angular_limit_z/lower_angle = -6.46
-angular_limit_z/softness = 0.01
-angular_limit_z/restitution = 0.01
-angular_limit_z/damping = 16.0
-angular_motor_z/target_velocity = 200.0
-angular_spring_z/stiffness = 50.0
-precision = 2
 
 [node name="CircleAnchor" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.213261, 0 )
+physics_material_override = SubResource( 10 )
 script = ExtResource( 2 )
 
 [node name="test" type="MeshInstance" parent="CircleAnchor"]
-transform = Transform( -1.35777e-08, -2.5643, 0, 0.0837207, -3.02109e-08, 0, 0, 0, 0.0837207, 2.41155, 1.5, 0 )
-mesh = SubResource( 9 )
+transform = Transform( -1.35777e-08, -2.5643, 0, 0.0837207, -3.02109e-08, 0, 0, 0, 0.0837207, 2.41155, 1.28989, 0 )
+mesh = SubResource( 11 )
 material/0 = null
 
 [node name="CemteConeCol" type="CollisionShape" parent="CircleAnchor"]
-shape = SubResource( 10 )
+shape = SubResource( 12 )
 
 [node name="CenterConeMesh" type="MeshInstance" parent="CircleAnchor"]
-mesh = SubResource( 11 )
+mesh = SubResource( 13 )
 material/0 = null
 
 [node name="debug" type="Spatial" parent="."]

@@ -42,11 +42,11 @@ master func register_player(name):
 	var sender = get_tree().get_rpc_sender_id()
 	for p in players:
 		if p.name == name:
-			return # no duplicate players
+			name += " (1)"
 	players.append({
 		"id": sender,
 		"name": name,
-		"ready": false,
+		"ready": false
 	})
 	for p in players:
 		rpc_id(p.id, "update_players", players)
